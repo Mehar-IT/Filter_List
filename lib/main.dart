@@ -69,19 +69,40 @@ class _MyListState extends State<MyList> {
   }
 }
 
-class MyTextField extends StatelessWidget {
+class MyTextField extends StatefulWidget {
   final ValueSetter onchanged;
   const MyTextField({
     @required this.onchanged,
   });
 
   @override
+  _MyTextFieldState createState() => _MyTextFieldState();
+}
+
+class _MyTextFieldState extends State<MyTextField> {
+  final controller = TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(16.0),
       child: TextField(
-        onChanged: onchanged,
+        controller: controller,
+        onChanged: widget.onchanged,
         decoration: InputDecoration(
+          prefixIcon: Icon(Icons.search),
+          suffixIcon: controller.text.isEmpty
+              ? null
+              : IconButton(
+                  icon: Icon(Icons.close),
+                  onPressed: () {
+                    setState(() {
+                      controller.clear();
+                      widget.onchanged('');
+                      FocusScope.of(context).requestFocus(FocusNode());
+                    });
+                  },
+                ),
           border: OutlineInputBorder(),
           labelText: 'Search',
           hintText: 'Enter an item name',
